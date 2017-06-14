@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.1.7//EN"
+    "http://struts.apache.org/dtds/struts-2.1.7.dtd">
+
+<struts>
+
+	<package name="default" namespace="/" extends="struts-default">
+		<interceptors>
+			<interceptor name="authentication" class="MMC.interceptor.LoggedInterceptor"></interceptor>
+			<interceptor-stack name="authStack">
+				<interceptor-ref name="authentication"></interceptor-ref>
+				<interceptor-ref name="defaultStack"></interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+
+		<global-results>
+			<result name="login" type="redirect">logout</result>
+		</global-results>
+
+		<action name="logout" class="MMC.action.login.Logout">
+			<result name="success">/login.jsp</result>
+		</action>
+		<action name="register" class="MMC.action.login.PatientRegisterAction">
+			<result name="success" type="chain">email</result>
+			<result name="input">/patientreg.jsp</result>
+		</action>
+
+		<action name="registerdoctor" class="MMC.action.login.DoctorRegistrationAction">
+			<result name="success" type="chain">emaildoc</result>
+			<result name="input">/doctorsreg.jsp</result>
+		</action>
+		<action name="emaildoc" class="MMC.action.login.EmailAction">
+			<result name="success">/verificationpagedoc.jsp</result>
+		</action>
+		<action name="email" class="MMC.action.login.EmailAction">
+			<result name="success">/verificationpage.jsp</result>
+		</action>
+		<action name="email2" class="MMC.action.login.EmailAction">
+			<result name="success">/verificationpage2.jsp</result>
+		</action>
+		<action name="verify" class="MMC.action.login.VerifyAction">
+			<result name="success">/login.jsp</result>
+			<result name="input">/verificationpage.jsp</result>
+		</action>
+		<action name="verifydoc" class="MMC.action.login.VerifyAction">
+			<result name="success">/doctorsreg.jsp</result>
+			<result name="input">/verificationpagedoc.jsp</result>
+		</action>
+
+		<action name="verifypass" class="MMC.action.login.VerifyAction2">
+			<result name="success">/newpass.jsp</result>
+			<result name="input">/verificationpage2.jsp</result>
+		</action>
+		<action name="newpass" class="MMC.action.login.NewPassAction">
+			<result name="success">login.jsp</result>
+			<result name="input">newpass.jsp</result>
+
+		</action>
+
+
+		<action name="loginsubmit" class="MMC.action.login.LoginAction">
+			<result name="doctor" type="redirect">/docqueue.jsp</result>
+			<result name="patient" type="redirect">patientProfile</result>
+			<result name="nurse" type="redirect">/nursehome.jsp</result>
+
+			<result name="input">login.jsp</result>
+		</action>
+
+		<action name="forgot" class="MMC.action.login.ForgotAction">
+			<result name="success" type="chain">email2</result>
+			<result name="input">forgotpass.jsp</result>
+
+		</action>
+		<action name="evaluate" class="MMC.action.doctor.DocEvalAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/patientinfo.jsp</result>
+			<result name="error">error.jsp</result>
+		</action>
+		
+	
+
+		<action name="evalPatient" class="MMC.action.doctor.DocEvalAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/patientprofile.jsp</result>
+			<result name="error">/error.jsp</result>
+		</action>
+
+
+		<action name="viewPList" class="MMC.action.doctor.ViewPatientList">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/mypatients.jsp</result>
+			<result name="error">/error.jsp</result>
+
+		</action>
+
+		<action name="viewDList" class="MMC.action.doctor.ViewDoctorList">
+			<!-- <interceptor-ref name="authStack"></interceptor-ref> -->
+			<result name="success">/doctorsandstaff.jsp</result>
+			<result name="error">/error.jsp</result>
+
+		</action>
+
+		<action name="patientDList" class="MMC.action.doctor.ViewDoctorList">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/patientdoclist.jsp</result>
+			<result name="error">/error.jsp</result>
+
+		</action>
+
+		<action name="setPatient" class="MMC.action.doctor.SetPatient">
+			<result type="chain">evaluate</result>
+		</action>
+		<action name="setPatientNurse" class="MMC.action.doctor.SetPatient">
+			<result type="chain">evaluatenurse</result>
+		</action>
+		
+		<action name="evaluatenurse" class="MMC.action.doctor.ViewMedHistoryAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/nursemedform.jsp</result>
+		</action>
+		
+		<action name="addMedHistNurse" class="MMC.action.doctor.AddMedHistAction">
+			<result name="success" type="chain">evaluatenurse</result>
+		</action>
+		<action name="onemedhistnurse" class="MMC.action.doctor.ViewMedHistoryAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/nurseviewonemedhist.jsp</result>
+			<!-- <result name="error">/docerrorpage2.jsp</result> -->
+		</action>
+		<!-- <action name="addMedHistP" class="MMC.action.doctor.AddMedHistAction"> 
+			<result name="success" type="chain">evalPatient</result> </action> <action 
+			name="setPatientP" class="MMC.action.doctor.SetPatient"> <result type="chain">evalPatient</result> 
+			</action> <action name="addConsultationP" class="MMC.action.doctor.AddConsultationAction"> 
+			<result name="success" type="chain">evalPatient</result> </action> -->
+
+		<action name="addMedHist" class="MMC.action.doctor.AddMedHistAction">
+			<result name="success" type="chain">evaluate</result>
+		</action>
+		<action name="addConsultation" class="MMC.action.doctor.AddConsultationAction">
+			<result name="success" type="chain">evaluate</result>
+		</action>
+		<action name="viewConsultation" class="MMC.action.doctor.ViewConsultationAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/consultationlist.jsp</result>
+		</action>
+		<action name="seeConsult" class="MMC.action.doctor.SeeConsultationAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/seeconsult.jsp</result>
+		</action>
+
+		<action name="search" class="MMC.action.doctor.SearchAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/searchlist.jsp</result>
+			<result name="input">/search.jsp</result>
+
+		</action>
+		<action name="guestreg" class="MMC.action.nurse.GuestRegAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+
+			<result name="success" type="chain">searchpatient</result>
+			<result name="input">/guestreg.jsp</result>
+
+		</action>
+
+		<action name="seeConsultPatient" class="MMC.action.patient.SeeConsultationAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/seeconsult2.jsp</result>
+		</action>
+		<action name="consultHist" class="MMC.action.patient.ConsultationHistoryAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/patientconsult.jsp</result>
+		</action>
+
+		<action name="docProfile" class="MMC.action.doctor.SeeInfoDoc">
+			<interceptor-ref name="authStack"></interceptor-ref>
+
+			<result name="success">/docprofile.jsp</result>
+		</action>
+		<action name="patientProfile" class="MMC.action.patient.SeeInfoPatient">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/patientprofile.jsp</result>
+		</action>
+		<action name="patientProf" class="MMC.action.patient.SeeInfoPatient">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/patientaccount.jsp</result>
+		</action>
+		<action name="addQueue" class="MMC.action.nurse.AddQueueAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+
+			<result name="success">/nursehome.jsp</result>
+		</action>
+		<action name="changepasswordpatient" class="MMC.action.user.NewPassAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">patientProf</result>
+			<result name="input">/changepasspatient.jsp</result>
+		</action>
+		<action name="changepassworddoctor" class="MMC.action.user.NewPassAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">docProfile</result>
+			<result name="input">/changepassdoctor.jsp</result>
+		</action>
+		<action name="changepasswordnurse" class="MMC.action.user.NewPassAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">nuProfile</result>
+			<result name="input">/changepassnurse.jsp</result>
+		</action>
+		<!-- <action name="redirect" class="MMC.action.user.Gettype">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="doctor">/docqueue.jsp</result>
+			<result name="nurse">/nursehome.jsp</result>
+			<result name="patient">patientProfile</result>
+		</action>-->
+
+		<action name="searchpatient" class="MMC.action.nurse.SearchAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/searchlistnurse.jsp</result>
+			<result name="input">nursehome.jsp</result>
+		</action>
+
+		<action name="docsched" class="MMC.action.doctor.DocSchedAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success2" type="chain">weeklydatedoc</result>
+			<result name="success">/result.jsp</result>
+			<result name="error">/docerrorpage2.jsp</result>
+		</action>
+
+		<action name="doclistsched" class="MMC.action.doctor.ViewDoctorList">
+			<interceptor-ref name="authStack"></interceptor-ref>
+
+			<result name="success">/docsched.jsp</result>
+		</action>
+
+		<action name="weeklydate" class="MMC.action.patient.ProcessDateAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+
+			<result name="success">/result2.jsp</result>
+			<result name="error">/patienterrorpage.jsp</result>
+		</action>
+
+		<action name="weeklydatedoc" class="MMC.action.doctor.ProcessDateActionDoc">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/docschedview.jsp</result>
+			<result name="error">/docerrorpage.jsp</result>
+		</action>
+
+		<action name="reserve" class="MMC.action.patient.ReserveAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+
+			<result name="success" type="chain">weeklydate</result>
+			<result name="error">/patienterrorpage.jsp</result>
+
+		</action>
+		<action name="cancel" class="MMC.action.patient.CancelReserveAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+
+			<result name="success" type="chain">weeklydate</result>
+			<result name="error">/patienterrorpage.jsp</result>
+
+		</action>
+
+		<action name="deletesched" class="MMC.action.doctor.DeleteSchedAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+
+			<result name="success" type="chain">weeklydatedoc</result>
+			<result name="error">/docerrorpage.jsp</result>
+		</action>
+
+		<action name="reslist" class="MMC.action.doctor.ReservationListAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">docqueue.jsp</result>
+			<result name="error">/patienterrorpage.jsp</result>
+
+		</action>
+		<action name="nuProfile" class="MMC.action.doctor.SeeInfoDoc">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">nurseprofile.jsp</result>
+
+
+		</action>
+		<action name="weeklydatenurse" class="MMC.action.nurse.ProcessDateAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/resultnurse.jsp</result>
+			<result name="error">/nurseerrorpage.jsp</result>
+		</action>
+		<action name="reservenurse" class="MMC.action.nurse.ReserveAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success" type="chain">weeklydatenurse</result>
+			<result name="error">/nurseerrorpage.jsp</result>
+		</action>
+		<action name="cancelnurse" class="MMC.action.nurse.CancelReserveAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success" type="chain">weeklydatenurse</result>
+			<result name="error">/nurseerrorpage.jsp</result>
+		</action>
+
+		<action name="resendcode" class="MMC.action.login.EmailAction">
+			<result name="success">/verificationpage.jsp</result>
+		</action>
+
+		<action name="resendcode2" class="MMC.action.login.EmailAction">
+			<result name="success">/verificationpage2.jsp</result>
+		</action>
+
+		<action name="docweeksched" class="MMC.action.doctor.DocWeekSchedAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/result.jsp</result>
+			<!-- <result name="error">/docerrorpage2.jsp</result> -->
+		</action>
+
+		<action name="medhistory" class="MMC.action.doctor.ViewMedHistoryAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/docviewmedhist.jsp</result>
+			<!-- <result name="error">/docerrorpage2.jsp</result> -->
+		</action>
+		<action name="onemedhist" class="MMC.action.doctor.ViewMedHistoryAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/docviewonemedhist.jsp</result>
+			<!-- <result name="error">/docerrorpage2.jsp</result> -->
+		</action>
+
+		<action name="addweek" class="MMC.action.doctor.WeekMonthYearAction">
+			<interceptor-ref name="authStack"></interceptor-ref>
+			<result name="success">/weeksuccess.jsp</result>
+			<result name="error">/docerrorpage.jsp</result>
+			<result name="input">/docsched.jsp</result>
+			
+
+		</action>
+	</package>
+</struts>
